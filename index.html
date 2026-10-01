@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07110f">
+  <meta name="description" content="PocketSmart AI helps Tharun create practical budget plans for interiors, parties and jewellery.">
+  <meta name="pocketsmart-api-base" content="">
+  <title>PocketSmart AI · Tharun</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307110f'/%3E%3Cpath d='M17 17h20c9 0 14 5 14 13 0 9-6 14-15 14H28v7H17V17Zm11 10v8h8c3 0 5-1 5-4 0-3-2-4-5-4h-8Z' fill='%23c9ff47'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #07110f;
+      --panel: #0d1917;
+      --panel-strong: #111f1c;
+      --line: rgba(224, 255, 236, 0.12);
+      --line-strong: rgba(201, 255, 71, 0.28);
+      --text: #f5fff9;
+      --muted: #9eb2aa;
+      --lime: #c9ff47;
+      --aqua: #58f4d0;
+      --coral: #ff886f;
+      --white-soft: rgba(255,255,255,.06);
+      --shadow: 0 28px 80px rgba(0, 0, 0, .38);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: dark; scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 11% 2%, rgba(88, 244, 208, .13), transparent 26rem),
+        radial-gradient(circle at 88% 92%, rgba(201, 255, 71, .10), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+
+    .shell {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #07110f;
+      background: var(--lime);
+      box-shadow: 0 0 0 5px rgba(201,255,71,.08);
+      font-weight: 900;
+      letter-spacing: -.08em;
+    }
+
+    .brand-copy { display: grid; line-height: 1.05; }
+    .brand-copy strong { font-size: 1.02rem; letter-spacing: -.02em; }
+    .brand-copy small { margin-top: 5px; color: var(--muted); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; }
+
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+
+    .owner-chip {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .owner-chip strong { color: var(--aqua); }
+
+    .ghost-button, .secondary-button, .icon-button {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    .ghost-button {
+      min-height: 42px;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 700;
+      font-size: .88rem;
+    }
+
+    .ghost-button:hover, .secondary-button:hover, .icon-button:hover {
+      border-color: var(--line-strong);
+      background: rgba(201,255,71,.07);
+    }
+
+    .count {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      color: #07110f;
+      background: var(--lime);
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .intro {
+      padding: 48px 0 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 32px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--aqua);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.35rem, 6vw, 5.2rem);
+      line-height: .94;
+      letter-spacing: -.065em;
+      font-weight: 850;
+    }
+
+    h1 span { color: var(--lime); }
+
+    .intro-note {
+      max-width: 320px;
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: .96rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+      gap: 18px;
+      padding-bottom: 30px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(150deg, rgba(17,31,28,.96), rgba(10,22,19,.92));
+      box-shadow: var(--shadow);
+    }
+
+    .planner-panel { padding: clamp(22px, 4vw, 36px); }
+
+    .planner-panel::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -130px;
+      top: 150px;
+      border: 1px solid rgba(88,244,208,.16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 32px rgba(88,244,208,.025), 0 0 0 64px rgba(88,244,208,.018);
+      pointer-events: none;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .section-kicker { color: var(--muted); font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; }
+    .step { color: var(--lime); font-size: .8rem; font-weight: 900; letter-spacing: .14em; }
+
+    .category-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+
+    .category-button {
+      min-height: 112px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+      cursor: pointer;
+      text-align: left;
+      transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
+    }
+
+    .category-button:hover { transform: translateY(-2px); border-color: rgba(88,244,208,.35); color: var(--text); }
+
+    .category-button[aria-checked="true"] {
+      color: var(--text);
+      border-color: var(--lime);
+      background: linear-gradient(145deg, rgba(201,255,71,.15), rgba(88,244,208,.045));
+      box-shadow: inset 0 0 0 1px rgba(201,255,71,.08);
+    }
+
+    .category-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: var(--aqua);
+      background: rgba(88,244,208,.09);
+    }
+
+    .category-button[aria-checked="true"] .category-icon { color: #07110f; background: var(--lime); }
+    .category-button svg { width: 20px; height: 20px; stroke-width: 1.8; }
+    .category-button strong { font-size: .91rem; line-height: 1.2; }
+
+    .field { position: relative; z-index: 1; margin-top: 20px; }
+    .field-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+    .field-label label, .field > label { display: block; margin-bottom: 9px; color: #dce9e3; font-size: .86rem; font-weight: 750; }
+    .field-hint { color: var(--muted); font-size: .74rem; }
+
+    .money-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(2, 9, 8, .46);
+    }
+
+    .currency { color: var(--lime); font-size: 1.25rem; font-weight: 900; }
+    .money-input input { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; font-size: 1.32rem; font-weight: 800; letter-spacing: -.02em; }
+    .money-input:focus-within { border-color: var(--aqua); box-shadow: 0 0 0 4px rgba(88,244,208,.08); }
+
+    input[type="range"] { width: 100%; margin: 16px 0 4px; accent-color: var(--lime); cursor: pointer; }
+
+    .quick-budgets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .quick-budget {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: .75rem;
+      font-weight: 750;
+    }
+    .quick-budget:hover { color: var(--bg); border-color: var(--lime); background: var(--lime); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      outline: 0;
+      color: var(--text);
+      background: rgba(2, 9, 8, .46);
+    }
+
+    select { height: 52px; padding: 0 14px; cursor: pointer; }
+    textarea { min-height: 52px; max-height: 128px; padding: 13px 14px; resize: vertical; }
+    select:focus, textarea:focus { border-color: var(--aqua); box-shadow: 0 0 0 4px rgba(88,244,208,.08); }
+
+    .form-error { min-height: 22px; margin: 10px 0 0; color: #ffab98; font-size: .82rem; }
+
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+    .primary-button {
+      min-height: 54px;
+      flex: 1;
+      border: 0;
+      border-radius: 14px;
+      color: #07110f;
+      background: var(--lime);
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: -.01em;
+      box-shadow: 0 16px 34px rgba(201,255,71,.12);
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .primary-button:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .primary-button:active { transform: translateY(0); }
+    .secondary-button { min-height: 54px; padding: 0 17px; font-weight: 750; }
+
+    .result-panel {
+      min-height: 680px;
+      padding: clamp(22px, 4vw, 36px);
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at 88% 7%, rgba(201,255,71,.12), transparent 16rem),
+        linear-gradient(150deg, rgba(14,29,25,.98), rgba(7,16,14,.98));
+    }
+
+    .empty-state {
+      flex: 1;
+      min-height: 510px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .empty-inner { max-width: 330px; }
+    .orb {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 28px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border: 1px solid rgba(201,255,71,.18);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,255,71,.13), transparent 66%);
+    }
+    .orb::before, .orb::after { content: ""; position: absolute; border-radius: 50%; }
+    .orb::before { inset: 17px; border: 1px dashed rgba(88,244,208,.45); animation: spin 13s linear infinite; }
+    .orb::after { inset: 41px; background: var(--lime); box-shadow: 0 0 34px rgba(201,255,71,.34); }
+    .orb span { z-index: 1; color: #07110f; font-size: 1rem; font-weight: 950; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state h2 { margin: 0 0 10px; font-size: 1.45rem; letter-spacing: -.03em; }
+    .empty-state p { margin: 0; color: var(--muted); }
+
+    .result-content[hidden], .empty-state[hidden] { display: none; }
+    .result-content { animation: rise .42s ease both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+
+    .result-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .result-top h2 { margin: 4px 0 0; font-size: clamp(1.55rem, 3.5vw, 2.3rem); letter-spacing: -.045em; }
+    .plan-tag { padding: 7px 10px; border: 1px solid rgba(88,244,208,.25); border-radius: 999px; color: var(--aqua); background: rgba(88,244,208,.06); font-size: .7rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+
+    .score-strip {
+      margin: 23px 0 20px;
+      padding: 17px;
+      display: grid;
+      grid-template-columns: 98px 1fr;
+      align-items: center;
+      gap: 18px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .budget-ring {
+      width: 92px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--lime) 0deg, rgba(255,255,255,.09) 0deg);
+      position: relative;
+    }
+    .budget-ring::after { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: #0c1b17; }
+    .budget-ring span { position: relative; z-index: 1; font-size: 1.02rem; font-weight: 950; }
+    .score-copy strong { display: block; font-size: 1.02rem; }
+    .score-copy p { margin: 6px 0 0; color: var(--muted); font-size: .84rem; }
+
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-bottom: 22px; }
+    .metric { min-width: 0; padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: rgba(2,9,8,.32); }
+    .metric span { display: block; margin-bottom: 5px; color: var(--muted); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
+    .metric strong { display: block; overflow: hidden; color: var(--text); font-size: .96rem; text-overflow: ellipsis; white-space: nowrap; }
+    .metric:last-child strong { color: var(--lime); }
+
+    .recommendations { display: grid; gap: 9px; }
+    .rec-item {
+      padding: 13px 14px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.022);
+    }
+    .rec-number { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; color: var(--aqua); background: rgba(88,244,208,.08); font-size: .7rem; font-weight: 900; }
+    .rec-copy { min-width: 0; }
+    .rec-copy strong { display: block; font-size: .87rem; }
+    .rec-copy small { display: block; overflow: hidden; margin-top: 2px; color: var(--muted); font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+    .rec-amount { color: var(--text); font-size: .86rem; font-weight: 850; white-space: nowrap; }
+
+    .result-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .result-actions .primary-button { min-height: 49px; }
+    .result-actions .secondary-button { min-height: 49px; }
+
+    .footer {
+      padding: 20px 0 38px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .footer strong { color: var(--text); }
+
+    dialog {
+      width: min(760px, calc(100% - 28px));
+      max-height: min(760px, calc(100vh - 40px));
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      border-radius: 24px;
+      color: var(--text);
+      background: #0c1916;
+      box-shadow: 0 40px 120px rgba(0,0,0,.68);
+    }
+    dialog::backdrop { background: rgba(2, 7, 6, .78); backdrop-filter: blur(10px); }
+
+    .dialog-head { padding: 22px 24px 17px; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.03em; }
+    .dialog-head p { margin: 4px 0 0; color: var(--muted); font-size: .82rem; }
+    .icon-button { width: 40px; height: 40px; display: grid; place-items: center; font-size: 1.25rem; }
+    .dialog-tools { padding: 14px 24px; display: flex; gap: 10px; border-bottom: 1px solid var(--line); }
+    .dialog-tools input { flex: 1; min-width: 0; height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; outline: 0; color: var(--text); background: rgba(2,9,8,.42); }
+    .dialog-tools input:focus { border-color: var(--aqua); }
+    .history-list { max-height: 510px; padding: 14px 24px 24px; overflow-y: auto; display: grid; gap: 10px; }
+    .history-empty { padding: 48px 16px; color: var(--muted); text-align: center; }
+    .history-card { padding: 15px; display: grid; grid-template-columns: 1fr auto; gap: 16px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.025); }
+    .history-card h3 { margin: 0 0 5px; font-size: .94rem; }
+    .history-card p { margin: 0; color: var(--muted); font-size: .76rem; }
+    .history-value { color: var(--lime); font-size: .92rem; font-weight: 900; text-align: right; }
+    .history-card-actions { margin-top: 8px; display: flex; justify-content: flex-end; gap: 6px; }
+    .mini-button { padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; font-size: .7rem; }
+    .mini-button:hover { color: var(--text); border-color: var(--line-strong); }
+    .mini-button.danger:hover { color: #ffab98; border-color: rgba(255,136,111,.4); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 20;
+      padding: 11px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      color: var(--text);
+      background: #12231f;
+      box-shadow: 0 16px 50px rgba(0,0,0,.4);
+      transform: translate(-50%, 28px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      font-size: .84rem;
+      font-weight: 750;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    :focus-visible { outline: 3px solid rgba(88,244,208,.6); outline-offset: 3px; }
+
+    @media (max-width: 900px) {
+      .intro { grid-template-columns: 1fr; padding-top: 36px; }
+      .intro-note { max-width: 600px; }
+      .workspace { grid-template-columns: 1fr; }
+      .result-panel { min-height: auto; }
+      .empty-state { min-height: 420px; }
+    }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 20px, 1240px); }
+      .topbar { min-height: 74px; }
+      .owner-chip { display: none; }
+      .ghost-button { padding: 0 11px; }
+      .ghost-button .button-text { display: none; }
+      .intro { padding: 30px 4px 20px; }
+      h1 { font-size: clamp(2.55rem, 15vw, 4.1rem); }
+      .intro-note { font-size: .9rem; }
+      .panel { border-radius: 22px; }
+      .planner-panel, .result-panel { padding: 20px 16px; }
+      .category-grid { gap: 7px; }
+      .category-button { min-height: 100px; padding: 12px 9px; }
+      .category-button strong { font-size: .78rem; }
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+      .form-actions, .result-actions { flex-direction: column; }
+      .secondary-button { width: 100%; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metric:last-child { grid-column: 1 / -1; }
+      .rec-item { grid-template-columns: 32px minmax(0,1fr); }
+      .rec-amount { grid-column: 2; }
+      .score-strip { grid-template-columns: 78px 1fr; }
+      .budget-ring { width: 74px; }
+      .footer { flex-direction: column; gap: 6px; }
+      .dialog-tools { padding-inline: 14px; }
+      .history-list { padding-inline: 14px; }
+      .history-card { grid-template-columns: 1fr; }
+      .history-value { text-align: left; }
+      .history-card-actions { justify-content: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="PocketSmart AI home">
+        <span class="brand-mark" aria-hidden="true">PS</span>
+        <span class="brand-copy"><strong>PocketSmart AI</strong><small>Budget intelligence</small></span>
+      </a>
+      <div class="top-actions">
+        <span class="owner-chip">Project by <strong>THARUN</strong></span>
+        <button class="ghost-button" id="openHistory" type="button" aria-haspopup="dialog">
+          <span class="button-text">Saved plans</span><span class="count" id="savedCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="intro" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">Plan with purpose · spend with clarity</p>
+        <h1 id="pageTitle">Plan big.<br><span>Spend smart.</span></h1>
+      </div>
+      <p class="intro-note">Set your budget, choose your goal and get a clear spending plan in seconds.</p>
+    </section>
+
+    <main class="workspace">
+      <section class="panel planner-panel" aria-labelledby="plannerTitle">
+        <div class="section-head">
+          <span class="section-kicker" id="plannerTitle">Create your plan</span>
+          <span class="step">01 / 02</span>
+        </div>
+
+        <div class="category-grid" role="radiogroup" aria-label="Choose planning category">
+          <button class="category-button" type="button" role="radio" aria-checked="true" data-category="home">
+            <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10M9 20v-6h6v6"/></svg></span>
+            <strong>Home Interior</strong>
+          </button>
+          <button class="category-button" type="button" role="radio" aria-checked="false" data-category="party">
+            <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 21 4-14 8 8-12 6Z"/><path d="M12 5c1-2 3-3 5-2M16 9c2-1 4 0 5 1M9 3c0-1 1-2 2-2"/><path d="m18 4 .5.5M21 14l.5.5"/></svg></span>
+            <strong>Party Planner</strong>
+          </button>
+          <button class="category-button" type="button" role="radio" aria-checked="false" data-category="jewellery">
+            <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 9 4-5h10l4 5-9 11L3 9Z"/><path d="M3 9h18M7 4l5 16 5-16"/></svg></span>
+            <strong>Jewellery Plan</strong>
+          </button>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><label for="budget">Your total budget</label><span class="field-hint">Minimum ₹5,000</span></div>
+          <div class="money-input"><span class="currency">₹</span><input id="budget" type="number" min="5000" max="10000000" step="1000" value="100000" inputmode="numeric" aria-describedby="budgetError"></div>
+          <input id="budgetRange" type="range" min="5000" max="500000" step="5000" value="100000" aria-label="Budget slider">
+          <div class="quick-budgets" aria-label="Quick budget choices">
+            <button class="quick-budget" type="button" data-budget="25000">₹25K</button>
+            <button class="quick-budget" type="button" data-budget="50000">₹50K</button>
+            <button class="quick-budget" type="button" data-budget="100000">₹1L</button>
+            <button class="quick-budget" type="button" data-budget="200000">₹2L</button>
+            <button class="quick-budget" type="button" data-budget="500000">₹5L</button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="preference" id="preferenceLabel">Interior style</label>
+            <select id="preference"></select>
+          </div>
+          <div class="field">
+            <label for="notes">Priority <span class="field-hint">(optional)</span></label>
+            <textarea id="notes" maxlength="500" placeholder="Example: Focus on the living room"></textarea>
+          </div>
+        </div>
+
+        <p class="form-error" id="budgetError" role="alert"></p>
+        <div class="form-actions">
+          <button class="primary-button" id="generatePlan" type="button">Generate smart plan</button>
+          <button class="secondary-button" id="resetPlan" type="button">Reset</button>
+        </div>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="resultTitle" aria-live="polite">
+        <div class="section-head">
+          <span class="section-kicker" id="resultTitle">Smart recommendation</span>
+          <span class="step">02 / 02</span>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-inner">
+            <div class="orb" aria-hidden="true"><span>AI</span></div>
+            <h2>Your plan will appear here</h2>
+            <p>Choose a category and budget, then generate a practical split you can use immediately.</p>
+          </div>
+        </div>
+
+        <div class="result-content" id="resultContent" hidden>
+          <div class="result-top">
+            <div><p class="eyebrow">Plan ready</p><h2 id="resultHeading">Balanced Home Plan</h2></div>
+            <span class="plan-tag" id="planTier">Balanced</span>
+          </div>
+
+          <div class="score-strip">
+            <div class="budget-ring" id="budgetRing"><span id="usePercent">90%</span></div>
+            <div class="score-copy"><strong id="scoreTitle">Built to stay within budget</strong><p id="scoreText">The plan keeps a reserve for last-minute price changes.</p></div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric"><span>Budget</span><strong id="metricBudget">₹0</strong></div>
+            <div class="metric"><span>Planned</span><strong id="metricPlanned">₹0</strong></div>
+            <div class="metric"><span>Balance</span><strong id="metricBalance">₹0</strong></div>
+          </div>
+
+          <div class="recommendations" id="recommendations"></div>
+
+          <div class="result-actions">
+            <button class="primary-button" id="savePlan" type="button">Save this plan</button>
+            <button class="secondary-button" id="startOver" type="button">Create another</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><span>PocketSmart AI · Smart budget planning</span><span>Project by <strong>THARUN</strong></span></footer>
+  </div>
+
+  <dialog id="historyDialog" aria-labelledby="historyTitle">
+    <div class="dialog-head">
+      <div><h2 id="historyTitle">Saved plans</h2><p>Your plans stay on this device.</p></div>
+      <button class="icon-button" id="closeHistory" type="button" aria-label="Close saved plans">×</button>
+    </div>
+    <div class="dialog-tools">
+      <input id="historySearch" type="search" placeholder="Search saved plans" aria-label="Search saved plans">
+      <button class="secondary-button" id="clearHistory" type="button">Clear all</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "pocketsmart_tharun_plans_v1";
+      const API_BASE_URL = (document.querySelector('meta[name="pocketsmart-api-base"]')?.content || "").replace(/\/$/, "");
+      const categories = {
+        home: {
+          label: "Home Interior",
+          short: "Home",
+          preferenceLabel: "Interior style",
+          placeholder: "Example: Focus on the living room",
+          preferences: ["Modern", "Minimal", "Traditional", "Luxury"]
+        },
+        party: {
+          label: "Party Planner",
+          short: "Party",
+          preferenceLabel: "Event type",
+          placeholder: "Example: Food and photos are the priority",
+          preferences: ["Birthday", "College Event", "Wedding", "Corporate"]
+        },
+        jewellery: {
+          label: "Jewellery Plan",
+          short: "Jewellery",
+          preferenceLabel: "Buying goal",
+          placeholder: "Example: Lightweight pieces with resale value",
+          preferences: ["Wedding Set", "Daily Wear", "Festive", "Gift"]
+        }
+      };
+
+      const els = {
+        categoryButtons: [...document.querySelectorAll(".category-button")],
+        budget: document.getElementById("budget"),
+        budgetRange: document.getElementById("budgetRange"),
+        quickBudgets: [...document.querySelectorAll(".quick-budget")],
+        preference: document.getElementById("preference"),
+        preferenceLabel: document.getElementById("preferenceLabel"),
+        notes: document.getElementById("notes"),
+        budgetError: document.getElementById("budgetError"),
+        generate: document.getElementById("generatePlan"),
+        reset: document.getElementById("resetPlan"),
+        startOver: document.getElementById("startOver"),
+        empty: document.getElementById("emptyState"),
+        content: document.getElementById("resultContent"),
+        resultHeading: document.getElementById("resultHeading"),
+        tier: document.getElementById("planTier"),
+        ring: document.getElementById("budgetRing"),
+        usePercent: document.getElementById("usePercent"),
+        scoreText: document.getElementById("scoreText"),
+        metricBudget: document.getElementById("metricBudget"),
+        metricPlanned: document.getElementById("metricPlanned"),
+        metricBalance: document.getElementById("metricBalance"),
+        recommendations: document.getElementById("recommendations"),
+        save: document.getElementById("savePlan"),
+        openHistory: document.getElementById("openHistory"),
+        closeHistory: document.getElementById("closeHistory"),
+        historyDialog: document.getElementById("historyDialog"),
+        historySearch: document.getElementById("historySearch"),
+        historyList: document.getElementById("historyList"),
+        clearHistory: document.getElementById("clearHistory"),
+        savedCount: document.getElementById("savedCount"),
+        toast: document.getElementById("toast")
+      };
+
+      let selectedCategory = "home";
+      let currentPlan = null;
+      let toastTimer;
+
+      const formatINR = value => new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+      }).format(value);
+
+      const safeText = value => String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      function notify(message) {
+        clearTimeout(toastTimer);
+        els.toast.textContent = message;
+        els.toast.classList.add("show");
+        toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2200);
+      }
+
+      function getSavedPlans() {
+        try {
+          const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(value) ? value : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function setSavedPlans(plans) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(plans.slice(0, 20)));
+        updateSavedCount();
+      }
+
+      function updateSavedCount() {
+        els.savedCount.textContent = getSavedPlans().length;
+      }
+
+      function setCategory(category) {
+        if (!categories[category]) return;
+        selectedCategory = category;
+        els.categoryButtons.forEach(button => {
+          button.setAttribute("aria-checked", String(button.dataset.category === category));
+        });
+        const data = categories[category];
+        els.preferenceLabel.textContent = data.preferenceLabel;
+        els.preference.innerHTML = data.preferences.map(option => `<option value="${safeText(option)}">${safeText(option)}</option>`).join("");
+        els.notes.placeholder = data.placeholder;
+        els.budgetError.textContent = "";
+      }
+
+      function getTier(budget) {
+        if (budget < 30000) return "Focused";
+        if (budget < 100000) return "Essential";
+        if (budget < 300000) return "Balanced";
+        return "Premium";
+      }
+
+      function readBudget() {
+        const budget = Math.round(Number(els.budget.value));
+        if (!Number.isFinite(budget) || budget < 5000) {
+          els.budgetError.textContent = "Enter a budget of at least ₹5,000.";
+          els.budget.focus();
+          return null;
+        }
+        if (budget > 10000000) {
+          els.budgetError.textContent = "Enter a budget up to ₹1,00,00,000.";
+          els.budget.focus();
+          return null;
+        }
+        els.budgetError.textContent = "";
+        return budget;
+      }
+
+      function normalizeApiPlan(data) {
+        if (!data || !categories[data.category] || !Array.isArray(data.items)) {
+          throw new Error("The server returned an invalid plan.");
+        }
+        const planned = Number(data.total);
+        return {
+          id: String(data.plan_id),
+          createdAt: data.generated_at || new Date().toISOString(),
+          category: data.category,
+          categoryLabel: data.title || categories[data.category].label,
+          preference: data.preference,
+          notes: data.notes || "",
+          budget: Number(data.budget),
+          planned,
+          balance: Number(data.remaining),
+          tier: getTier(Number(data.budget)),
+          summary: data.summary || "Gemini created a practical plan with a protected reserve.",
+          source: data.source,
+          model: data.model,
+          items: data.items.map(item => ({
+            name: item.name,
+            reason: item.reason,
+            icon: item.icon,
+            amount: Number(item.amount),
+            percent: planned > 0 ? Math.round((Number(item.amount) / planned) * 100) : 0
+          }))
+        };
+      }
+
+      async function requestPlan({ category = selectedCategory, budget, preference, notes = "" } = {}) {
+        if (!categories[category]) throw new Error("Choose a valid planning category.");
+        const numericBudget = Math.round(Number(budget));
+        if (!Number.isFinite(numericBudget) || numericBudget < 5000 || numericBudget > 10000000) {
+          throw new Error("Budget must be between ₹5,000 and ₹1,00,00,000.");
+        }
+        const response = await fetch(`${API_BASE_URL}/api/recommendations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ category, budget: numericBudget, preference, notes })
+        });
+        let data = null;
+        try { data = await response.json(); } catch { /* handled below */ }
+        if (!response.ok) {
+          throw new Error(data?.detail || "Gemini service is unavailable. Check the backend setup and try again.");
+        }
+        return normalizeApiPlan(data);
+      }
+
+      function renderPlan(plan) {
+        currentPlan = plan;
+        const used = Math.round((plan.planned / plan.budget) * 100);
+        els.empty.hidden = true;
+        els.content.hidden = false;
+        els.resultHeading.textContent = `${plan.preference} ${categories[plan.category].short} Plan`;
+        els.tier.textContent = `Gemini · ${plan.tier}`;
+        els.ring.style.background = `conic-gradient(var(--lime) ${used * 3.6}deg, rgba(255,255,255,.09) 0deg)`;
+        els.usePercent.textContent = `${used}%`;
+        els.scoreText.textContent = plan.summary || "The plan keeps a reserve for last-minute price changes.";
+        els.metricBudget.textContent = formatINR(plan.budget);
+        els.metricPlanned.textContent = formatINR(plan.planned);
+        els.metricBalance.textContent = formatINR(plan.balance);
+        els.recommendations.innerHTML = plan.items.map((item, index) => `
+          <article class="rec-item">
+            <span class="rec-number">0${index + 1}</span>
+            <div class="rec-copy"><strong>${safeText(item.name)}</strong><small>${safeText(item.reason)} · ${item.percent}%</small></div>
+            <span class="rec-amount">${formatINR(item.amount)}</span>
+          </article>
+        `).join("");
+        els.save.textContent = "Save this plan";
+        els.save.disabled = false;
+        return plan;
+      }
+
+      async function generateFromForm() {
+        const budget = readBudget();
+        if (budget === null) return null;
+        els.generate.disabled = true;
+        els.generate.textContent = "Gemini is planning…";
+        els.budgetError.textContent = "";
+        try {
+          const plan = await requestPlan({
+            category: selectedCategory,
+            budget,
+            preference: els.preference.value,
+            notes: els.notes.value
+          });
+          renderPlan(plan);
+          if (window.innerWidth < 901) document.querySelector(".result-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+          return plan;
+        } catch (error) {
+          els.budgetError.textContent = error instanceof Error ? error.message : "Unable to generate a plan.";
+          notify("Plan generation failed");
+          return null;
+        } finally {
+          els.generate.disabled = false;
+          els.generate.textContent = "Generate smart plan";
+        }
+      }
+
+      function resetForm() {
+        setCategory("home");
+        els.budget.value = "100000";
+        els.budgetRange.value = "100000";
+        els.notes.value = "";
+        els.budgetError.textContent = "";
+        currentPlan = null;
+        els.content.hidden = true;
+        els.empty.hidden = false;
+      }
+
+      function saveCurrentPlan() {
+        if (!currentPlan) throw new Error("Generate a plan before saving.");
+        const plans = getSavedPlans();
+        if (!plans.some(plan => plan.id === currentPlan.id)) plans.unshift(currentPlan);
+        setSavedPlans(plans);
+        els.save.textContent = "Saved ✓";
+        els.save.disabled = true;
+        notify("Plan saved on this device");
+        return currentPlan;
+      }
+
+      function renderHistory(query = "") {
+        const term = query.trim().toLowerCase();
+        const plans = getSavedPlans().filter(plan => [plan.categoryLabel, plan.preference, plan.notes]
+          .join(" ").toLowerCase().includes(term));
+        if (!plans.length) {
+          els.historyList.innerHTML = `<div class="history-empty">${term ? "No matching plans found." : "No saved plans yet."}</div>`;
+          return;
+        }
+        els.historyList.innerHTML = plans.map(plan => `
+          <article class="history-card">
+            <div>
+              <h3>${safeText(plan.preference)} · ${safeText(plan.categoryLabel)}</h3>
+              <p>${new Date(plan.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}${plan.notes ? ` · ${safeText(plan.notes)}` : ""}</p>
+            </div>
+            <div>
+              <div class="history-value">${formatINR(plan.budget)}</div>
+              <div class="history-card-actions">
+                <button class="mini-button" type="button" data-open-plan="${safeText(plan.id)}">Open</button>
+                <button class="mini-button danger" type="button" data-delete-plan="${safeText(plan.id)}">Delete</button>
+              </div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      els.categoryButtons.forEach(button => button.addEventListener("click", () => setCategory(button.dataset.category)));
+      els.quickBudgets.forEach(button => button.addEventListener("click", () => {
+        els.budget.value = button.dataset.budget;
+        els.budgetRange.value = Math.min(Number(button.dataset.budget), Number(els.budgetRange.max));
+        els.budgetError.textContent = "";
+      }));
+      els.budgetRange.addEventListener("input", () => { els.budget.value = els.budgetRange.value; });
+      els.budget.addEventListener("input", () => {
+        const value = Number(els.budget.value);
+        if (Number.isFinite(value)) els.budgetRange.value = Math.min(Math.max(value, 5000), 500000);
+      });
+      els.generate.addEventListener("click", generateFromForm);
+      els.reset.addEventListener("click", resetForm);
+      els.startOver.addEventListener("click", () => {
+        currentPlan = null;
+        els.content.hidden = true;
+        els.empty.hidden = false;
+        document.querySelector(".planner-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      els.save.addEventListener("click", saveCurrentPlan);
+
+      els.openHistory.addEventListener("click", () => {
+        renderHistory();
+        els.historySearch.value = "";
+        if (typeof els.historyDialog.showModal === "function") els.historyDialog.showModal();
+        else els.historyDialog.setAttribute("open", "");
+      });
+      els.closeHistory.addEventListener("click", () => els.historyDialog.close());
+      els.historyDialog.addEventListener("click", event => {
+        if (event.target === els.historyDialog) els.historyDialog.close();
+      });
+      els.historySearch.addEventListener("input", () => renderHistory(els.historySearch.value));
+      els.clearHistory.addEventListener("click", () => {
+        if (!getSavedPlans().length) return;
+        if (window.confirm("Delete all saved plans from this device?")) {
+          setSavedPlans([]);
+          renderHistory();
+          notify("Saved plans cleared");
+        }
+      });
+      els.historyList.addEventListener("click", event => {
+        const openButton = event.target.closest("[data-open-plan]");
+        const deleteButton = event.target.closest("[data-delete-plan]");
+        if (openButton) {
+          const plan = getSavedPlans().find(item => item.id === openButton.dataset.openPlan);
+          if (!plan) return;
+          setCategory(plan.category);
+          els.budget.value = plan.budget;
+          els.budgetRange.value = Math.min(plan.budget, 500000);
+          els.preference.value = plan.preference;
+          els.notes.value = plan.notes || "";
+          renderPlan(plan);
+          els.historyDialog.close();
+        }
+        if (deleteButton) {
+          setSavedPlans(getSavedPlans().filter(item => item.id !== deleteButton.dataset.deletePlan));
+          renderHistory(els.historySearch.value);
+          notify("Plan deleted");
+        }
+      });
+
+      function registerWebMCP() {
+        const context = document.modelContext;
+        if (!context?.registerTool) return;
+        const lifecycle = new AbortController();
+        const register = tool => Promise.resolve(context.registerTool(tool, { signal: lifecycle.signal })).catch(() => {});
+
+        register({
+          name: "generate_budget_plan",
+          title: "Generate budget plan",
+          description: "Generate and display a PocketSmart budget plan for a home interior, party or jewellery goal.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              category: { type: "string", enum: ["home", "party", "jewellery"] },
+              budget: { type: "number", minimum: 5000, maximum: 10000000 },
+              preference: { type: "string" },
+              notes: { type: "string", maxLength: 500 }
+            },
+            required: ["category", "budget"],
+            additionalProperties: false
+          },
+          annotations: { readOnlyHint: false, untrustedContentHint: false },
+          async execute(input) {
+            const plan = await requestPlan(input || {});
+            setCategory(plan.category);
+            els.budget.value = plan.budget;
+            els.budgetRange.value = Math.min(plan.budget, 500000);
+            els.preference.value = plan.preference;
+            els.notes.value = plan.notes;
+            renderPlan(plan);
+            return { category: plan.categoryLabel, preference: plan.preference, budget: plan.budget, planned: plan.planned, balance: plan.balance };
+          }
+        });
+
+        register({
+          name: "save_current_budget_plan",
+          title: "Save current plan",
+          description: "Save the budget plan currently displayed in PocketSmart AI on this device.",
+          inputSchema: { type: "object", properties: {}, additionalProperties: false },
+          annotations: { readOnlyHint: false, untrustedContentHint: false },
+          execute() {
+            const plan = saveCurrentPlan();
+            return { saved: true, id: plan.id, totalSavedPlans: getSavedPlans().length };
+          }
+        });
+
+        register({
+          name: "list_saved_budget_plans",
+          title: "List saved plans",
+          description: "List the budget plans saved in PocketSmart AI on this device.",
+          inputSchema: { type: "object", properties: {}, additionalProperties: false },
+          annotations: { readOnlyHint: true, untrustedContentHint: false },
+          execute() {
+            return getSavedPlans().map(plan => ({ id: plan.id, category: plan.categoryLabel, preference: plan.preference, budget: plan.budget, createdAt: plan.createdAt }));
+          }
+        });
+
+        window.addEventListener("pagehide", () => lifecycle.abort(), { once: true });
+      }
+
+      setCategory("home");
+      updateSavedCount();
+      registerWebMCP();
+    })();
+  </script>
+</body>
+</html>
